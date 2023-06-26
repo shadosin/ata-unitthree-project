@@ -1,0 +1,278 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: An AWS Lambda application that calls the Lambda API.
+Parameters:
+  ProjectName:
+    Type: String
+Resources:
+  RetrieveExpenseFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: build/distributions/Application.zip
+      Handler: ata.unit.three.project.expense.lambda.RetrieveExpense
+      Runtime: java8
+      Description: retrieve expense
+      MemorySize: 512
+      Timeout: 60
+      # Function's execution role
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AWSLambda_ReadOnlyAccess
+        - AWSXrayWriteOnlyAccess
+        - AWSLambdaVPCAccessExecutionRole
+        - AmazonS3FullAccess
+        - AmazonDynamoDBFullAccess
+      Tracing: Active
+      Events:
+        GetResource:
+          Type: Api
+          Properties:
+            Path: /expenses/{expenseId}
+            Method: get
+  CreateExpenseFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: build/distributions/Application.zip
+      Handler: ata.unit.three.project.expense.lambda.CreateExpense
+      Runtime: java8
+      Description: create expense
+      MemorySize: 512
+      Timeout: 60
+      # Function's execution role
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AWSLambda_ReadOnlyAccess
+        - AWSXrayWriteOnlyAccess
+        - AWSLambdaVPCAccessExecutionRole
+        - AmazonS3FullAccess
+        - AmazonDynamoDBFullAccess
+      Tracing: Active
+      Events:
+        CreateResource:
+          Type: Api
+          Properties:
+            Path: /expenses
+            Method: post
+  UpdateExpenseFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: build/distributions/Application.zip
+      Handler: ata.unit.three.project.expense.lambda.UpdateExpense
+      Runtime: java8
+      Description: update expense
+      MemorySize: 512
+      Timeout: 60
+      # Function's execution role
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AWSLambda_ReadOnlyAccess
+        - AWSXrayWriteOnlyAccess
+        - AWSLambdaVPCAccessExecutionRole
+        - AmazonS3FullAccess
+        - AmazonDynamoDBFullAccess
+      Tracing: Active
+      Events:
+        UpdateResource:
+          Type: Api
+          Properties:
+            Path: /expenses/{expenseId}
+            Method: put
+  DeleteExpenseFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: build/distributions/Application.zip
+      Handler: ata.unit.three.project.expense.lambda.DeleteExpense
+      Runtime: java8
+      Description: delete expense
+      MemorySize: 512
+      Timeout: 60
+      # Function's execution role
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AWSLambda_ReadOnlyAccess
+        - AWSXrayWriteOnlyAccess
+        - AWSLambdaVPCAccessExecutionRole
+        - AmazonS3FullAccess
+        - AmazonDynamoDBFullAccess
+      Tracing: Active
+      Events:
+        DeleteResource:
+          Type: Api
+          Properties:
+            Path: /expenses/{expenseId}
+            Method: delete
+  RetrieveExpensesByEmailFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: build/distributions/Application.zip
+      Handler: ata.unit.three.project.expense.lambda.RetrieveExpensesByEmail
+      Runtime: java8
+      Description: retrieve expenses by email
+      MemorySize: 512
+      Timeout: 60
+      # Function's execution role
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AWSLambda_ReadOnlyAccess
+        - AWSXrayWriteOnlyAccess
+        - AWSLambdaVPCAccessExecutionRole
+        - AmazonS3FullAccess
+        - AmazonDynamoDBFullAccess
+      Tracing: Active
+      Events:
+        GetResource:
+          Type: Api
+          Properties:
+            Path: /expenses
+            Method: get
+  CreateExpenseListFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: build/distributions/Application.zip
+      Handler: ata.unit.three.project.expense.lambda.CreateExpenseList
+      Runtime: java8
+      Description: create expense list
+      MemorySize: 512
+      Timeout: 60
+      # Function's execution role
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AWSLambda_ReadOnlyAccess
+        - AWSXrayWriteOnlyAccess
+        - AWSLambdaVPCAccessExecutionRole
+        - AmazonS3FullAccess
+        - AmazonDynamoDBFullAccess
+      Tracing: Active
+      Events:
+        CreateResource:
+          Type: Api
+          Properties:
+            Path: /expenselists
+            Method: post
+  RetrieveExpenseListsByEmailFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: build/distributions/Application.zip
+      Handler: ata.unit.three.project.expense.lambda.RetrieveExpenseListsByEmail
+      Runtime: java8
+      Description: retrieve expense list by email
+      MemorySize: 512
+      Timeout: 60
+      # Function's execution role
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AWSLambda_ReadOnlyAccess
+        - AWSXrayWriteOnlyAccess
+        - AWSLambdaVPCAccessExecutionRole
+        - AmazonS3FullAccess
+        - AmazonDynamoDBFullAccess
+      Tracing: Active
+      Events:
+        CreateResource:
+          Type: Api
+          Properties:
+            Path: /expenselists
+            Method: get
+  AddExpenseItemToListFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: build/distributions/Application.zip
+      Handler: ata.unit.three.project.expense.lambda.AddExpenseItemToList
+      Runtime: java8
+      Description: add expense item to list
+      MemorySize: 512
+      Timeout: 60
+      # Function's execution role
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AWSLambda_ReadOnlyAccess
+        - AWSXrayWriteOnlyAccess
+        - AWSLambdaVPCAccessExecutionRole
+        - AmazonS3FullAccess
+        - AmazonDynamoDBFullAccess
+      Tracing: Active
+      Events:
+        CreateResource:
+          Type: Api
+          Properties:
+            Path: /expenselists/expenseitems
+            Method: post
+  RemoveExpenseItemFromListFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: build/distributions/Application.zip
+      Handler: ata.unit.three.project.expense.lambda.RemoveExpenseItemFromList
+      Runtime: java8
+      Description: remove expense item from list
+      MemorySize: 512
+      Timeout: 60
+      # Function's execution role
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AWSLambda_ReadOnlyAccess
+        - AWSXrayWriteOnlyAccess
+        - AWSLambdaVPCAccessExecutionRole
+        - AmazonS3FullAccess
+        - AmazonDynamoDBFullAccess
+      Tracing: Active
+      Events:
+        CreateResource:
+          Type: Api
+          Properties:
+            Path: /expenselists/expenseitems
+            Method: delete
+Outputs:
+  RetrieveExpenseApi:
+    Description: "API Gateway endpoint URL for Prod stage for Retrieve Expense function"
+    Value: !Sub "https://expense-tracker.execute-api.amazonaws.com/"
+  RetrieveExpenseFunction:
+    Description: "Retrieve Expense Lambda Function ARN"
+    Value: !GetAtt RetrieveExpenseFunction.Arn
+  RetrieveExpensesByEmailApi:
+    Description: "API Gateway endpoint URL for Prod stage for Retrieve Expenses By Email"
+    Value: !Sub
+  RetrieveExpensesByEmailFunction:
+    Description: "Retrieve Expense by Email Lambda Function ARN"
+    Value: !GetAtt RetrieveExpensesByEmailFunction.Arn
+  CreateExpenseApi:
+    Description: "API Gateway endpoint URL for Prod stage for Create Expensefunction"
+    Value: !Sub
+  CreateExpenseFunction:
+    Description: "Create Expense Lambda Function ARN"
+    Value: !GetAtt CreateExpenseFunction.Arn
+  UpdateExpenseApi:
+    Description: "API Gateway endpoint URL for Prod stage for Update Expense function"
+    Value: !Sub
+  UpdateExpenseFunction:
+    Description: "Update Expense Lambda Function ARN"
+    Value: !GetAtt UpdateExpenseFunction.Arn
+  DeleteExpenseApi:
+    Description: "API Gateway endpoint URL for Prod stage for Delete Expense function"
+    Value: !Sub
+  DeleteExpenseFunction:
+    Description: "Delete Expense Lambda Function ARN"
+    Value: !GetAtt DeleteExpenseFunction.Arn
+  CreateExpenseListApi:
+    Description: "API Gateway endpoint URL for Prod stage for Create Expense List function"
+    Value: !Sub
+  CreateExpenseListFunction:
+    Description: "Create Expense List Lambda Function ARN"
+    Value: !GetAtt CreateExpenseListFunction.Arn
+  RetrieveExpenseListsByEmailApi:
+    Description: "API Gateway endpoint URL for Prod stage for Retrieve Expense List by email function"
+    Value: !Sub
+  RetrieveExpenseListsByEmailFunction:
+    Description: "Retrieve Expense List by email  Lambda Function ARN"
+    Value: !GetAtt  RetrieveExpenseListsByEmailFunction.Arn
+  AddExpenseItemToListApi:
+    Description: "API Gateway endpoint URL for Prod stage for Add ExpenseItem to List"
+    Value: !Sub
+  AddExpenseItemToListFunction:
+    Description: "Add Expense Item To Lambda Function ARN"
+    Value: !GetAtt AddExpenseItemToListFunction.Arn
+  RemoveExpenseItemFromListApi:
+    Description: "API Gateway endpoint URL for Prod stage for Add ExpenseItem to List"
+    Value: !Sub
+  RemoveExpenseItemFromListFunction:
+    Description: "Remove Expense Item From Lisy To Lambda Function ARN"
+    Value: !GetAtt RemoveExpenseItemFromListFunction.Arn

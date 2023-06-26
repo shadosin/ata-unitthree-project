@@ -1,0 +1,81 @@
+plugins {
+    id 'ata-curriculum.snippets-conventions'
+    id 'ata-curriculum.integration-test-conventions'
+}
+
+dependencies {
+    testImplementation 'com.amazonaws:aws-lambda-java-core:1.2.1'
+    testImplementation group: 'com.amazonaws', name: 'aws-java-sdk-api-gateway', version: '1.12.147'
+    testImplementation group: 'com.amazonaws', name: 'aws-java-sdk-lambda', version: '1.12.23'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+    testImplementation group: 'org.skyscreamer', name: 'jsonassert', version: '1.5.0'
+    // https://mvnrepository.com/artifact/io.rest-assured/rest-assured
+    testImplementation 'io.rest-assured:rest-assured:4.4.0'
+    // https://mvnrepository.com/artifact/net.andreinc.mockneat/mockneat
+    testImplementation 'net.andreinc:mockneat:0.4.7'
+
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.0'
+
+    // For Reflection Tests
+    implementation 'com.google.dagger:dagger:2.30'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.30'
+    implementation project(':Application')
+    testImplementation 'com.kenzie:testinfrastructure:1.0.0'
+}
+
+task buildZip(type: Zip) {
+    from compileJava
+    from processResources
+    into('lib') {
+        from configurations.runtimeClasspath
+    }
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+build.dependsOn buildZip
+
+def wflowToTestsMap = [
+        'expensetracking-integration-task1': [
+                'ata.unit.three.project.integration.CreateExpenseTest.createExpenseTest',
+                'ata.unit.three.project.integration.RetrieveExpenseByEmailTest.getExpenseByEmailTest',
+                'ata.unit.three.project.integration.DeleteExpenseTest.deleteExpenseByIdTest'
+        ],
+        'expensetracking-integration-task2': [
+                'ata.unit.three.project.integration.CreateExpenseTest.createExpenseTestInvalidBody',
+                'ata.unit.three.project.integration.RetrieveExpenseByEmailTest.noEmailPresentTest',
+                'ata.unit.three.project.integration.DeleteExpenseTest.invalidExpenseIdTest',
+                'ata.unit.three.project.integration.RetrieveExpenseTest',
+                'ata.unit.three.project.integration.UpdateExpenseTest'
+        ],
+        'expensetracking-integration-task3': [
+                'ata.unit.three.project.introspection.TaskThreeTest'
+        ],
+        'expensetracking-integration-task4': [
+                'ata.unit.three.project.integration.CreateExpenseListTest',
+                'ata.unit.three.project.integration.AddItemToExpenseListTest',
+                'ata.unit.three.project.integration.RemoveItemFromExpenseListTest',
+        ],
+        'expensetracking-integration-task5': [
+                'ata.unit.three.project.integration.RetrieveExpenseListByEmailTest',
+                'ata.unit.three.project.introspection.TaskThreeTest'
+        ],
+]
+
+wflowToTestsMap.forEach { wflowName, testList ->
+    tasks.register(wflowName) {
+        dependsOn wflowtest
+        test {
+            reports.html.destination = file("$reports.html.destination/../${wflowName}")
+            reports.junitXml.destination = file("$reports.junitXml.destination/${wflowName}")
+            doFirst {
+                filter {
+                    testList.each { includeTestsMatching it }
+                }
+            }
+        }
+    }
+}

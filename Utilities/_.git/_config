@@ -1,0 +1,20 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+	precomposeunicode = true
+[remote "origin"]
+	url = ssh://git.amazon.com:2222/pkg/ATACheckstyle
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[branch "mainline"]
+	remote = origin
+	merge = refs/heads/mainline
+[remote "backup"]
+	url = ssh://git.amazon.com:2222/pkg/ATACheckstyle/backup/golemmes
+	fetch = +refs/heads/*:refs/remotes/backup/*
+	push = +refs/heads/*:refs/heads/*
+[remote "share"]
+	url = ssh://git.amazon.com:2222/pkg/ATACheckstyle/share/golemmes
+	fetch = +refs/heads/*:refs/remotes/share/*
+	push = +refs/heads/*:refs/heads/*
