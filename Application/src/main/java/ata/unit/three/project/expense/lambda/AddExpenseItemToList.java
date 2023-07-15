@@ -1,5 +1,13 @@
 package ata.unit.three.project.expense.lambda;
 
+import ata.unit.three.project.expense.dynamodb.ExpenseItem;
+import ata.unit.three.project.expense.lambda.models.ExpenseItemList;
+import ata.unit.three.project.expense.lambda.models.ExpenseList;
+import ata.unit.three.project.expense.service.DaggerExpenseServiceComponent;
+import ata.unit.three.project.expense.service.ExpenseService;
+import ata.unit.three.project.expense.service.ExpenseServiceComponent;
+import ata.unit.three.project.expense.service.exceptions.InvalidDataException;
+import ata.unit.three.project.expense.service.exceptions.ItemNotFoundException;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
@@ -22,11 +30,31 @@ public class AddExpenseItemToList implements RequestHandler<APIGatewayProxyReque
         // Logging the request json to make debugging easier.
         log.info(gson.toJson(input));
 
+        ExpenseServiceComponent dagger = DaggerExpenseServiceComponent.create();
+        ExpenseService expenseService = dagger.expenseService();
+
         APIGatewayProxyResponseEvent response = new APIGatewayProxyResponseEvent();
 
         // Your Code Here...
 
-        return response
-                .withStatusCode(200);
+        try {
+            ExpenseItemList expenseItemList = gson.fromJson(input.getBody(), ExpenseItemList.class);
+
+            String expenseListId = expenseItemList.getExpenseListId();
+            String expenseId = expenseItemList.getExpenseItemId();
+
+            expenseService.addExpenseItemToList(expenseListId, expenseId);
+
+            response.setStatusCode(204);
+        } catch (InvalidDataException | ItemNotFoundException e) {
+            response.setStatusCode(400);
+            response.setBody(e.getMessage());
+        } catch (Exception e) {
+            response.setStatusCode(500);
+            response.setBody("Internal Server Error");
+            log.error("An error occurred while processing the request", e);
+        }
+
+        return response;
     }
 }

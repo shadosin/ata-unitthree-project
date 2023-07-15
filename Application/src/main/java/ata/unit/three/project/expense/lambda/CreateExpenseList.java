@@ -2,6 +2,7 @@ package ata.unit.three.project.expense.lambda;
 
 import ata.unit.three.project.App;
 import ata.unit.three.project.expense.lambda.models.ExpenseList;
+import ata.unit.three.project.expense.service.DaggerExpenseServiceComponent;
 import ata.unit.three.project.expense.service.ExpenseService;
 import ata.unit.three.project.expense.service.ExpenseServiceComponent;
 
@@ -27,7 +28,8 @@ public class CreateExpenseList implements RequestHandler<APIGatewayProxyRequestE
         // Logging the request json to make debugging easier.
         log.info(gson.toJson(input));
 
-        ExpenseService expenseService = App.expenseService();
+        ExpenseServiceComponent dagger = DaggerExpenseServiceComponent.create();
+        ExpenseService expenseService = dagger.expenseService();
 
         APIGatewayProxyResponseEvent response = new APIGatewayProxyResponseEvent();
 

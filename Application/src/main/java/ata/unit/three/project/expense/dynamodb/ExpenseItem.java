@@ -6,6 +6,8 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIndexHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import com.kenzie.ata.ExcludeFromJacocoGeneratedReport;
 
+import java.util.Objects;
+
 @ExcludeFromJacocoGeneratedReport
 @DynamoDBTable(tableName = "Expense")
 public class ExpenseItem {
@@ -59,5 +61,18 @@ public class ExpenseItem {
 
     public void setAmount(Double amount) {
         this.amount = amount;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ExpenseItem)) return false;
+        ExpenseItem that = (ExpenseItem) o;
+        return getId().equals(that.getId()) && getExpenseDate().equals(that.getExpenseDate());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getExpenseDate());
     }
 }

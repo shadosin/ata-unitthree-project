@@ -19,7 +19,7 @@ public class ExpenseServiceRepository {
 
     AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard().build();
     DynamoDBMapper mapper = new DynamoDBMapper(client);
-
+    @Inject
     public ExpenseServiceRepository() {
         if (!ExpenseTable.doesExpenseTableExist(EXPENSE_TABLE_NAME)) {
             ExpenseTable.createExpenseTable();

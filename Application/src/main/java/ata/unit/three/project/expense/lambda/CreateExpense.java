@@ -2,9 +2,11 @@ package ata.unit.three.project.expense.lambda;
 
 import ata.unit.three.project.App;
 import ata.unit.three.project.expense.lambda.models.Expense;
+import ata.unit.three.project.expense.service.DaggerExpenseServiceComponent;
 import ata.unit.three.project.expense.service.ExpenseService;
 import ata.unit.three.project.expense.service.ExpenseServiceComponent;
 
+import ata.unit.three.project.expense.service.exceptions.InvalidExpenseException;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
@@ -22,23 +24,34 @@ public class CreateExpense implements RequestHandler<APIGatewayProxyRequestEvent
 
     @Override
     public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent input, Context context) {
-
-        GsonBuilder builder = new GsonBuilder();
-        Gson gson = builder.create();
-        // Logging the request json to make debugging easier.
+        Gson gson = new Gson();
         log.info(gson.toJson(input));
 
-        ExpenseService expenseService = App.expenseService();
+
+        ExpenseServiceComponent dagger = DaggerExpenseServiceComponent.create();
+        ExpenseService expenseService = dagger.expenseService();
+
 
         APIGatewayProxyResponseEvent response = new APIGatewayProxyResponseEvent();
-        
-        // Your Code Here
 
-        Expense expense = gson.fromJson(input.getBody(), Expense.class);
-        expenseService.createExpense(expense);
+        try {
+            Expense expense = gson.fromJson(input.getBody(), Expense.class);
 
-        return response
-                .withStatusCode(204);
+            // Check if the amount is a valid positive integer
+            double amount = expense.getAmount();
+            if (amount <= 0) {
+                throw new InvalidExpenseException("Invalid amount. Amount must be a positive integer.");
+            }
 
+            String id = expenseService.createExpense(expense);
+
+            return response
+                    .withStatusCode(200)
+                    .withBody(id);
+        } catch (InvalidExpenseException e) {
+            return response
+                    .withStatusCode(400)
+                    .withBody("Invalid expense data: " + e.getMessage());
+        }
     }
 }

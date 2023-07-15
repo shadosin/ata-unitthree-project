@@ -69,7 +69,7 @@ public class RetrieveExpenseListByEmailTest {
             .when()
                 .post(url + "expenselists/expenseitems")
             .then()
-                .statusCode(200);
+                .statusCode(204);
 
         Map<String, String> secondExpenseItemList = new HashMap<>();
         secondExpenseItemList.put("expenseListId", expenseListId);
@@ -81,7 +81,7 @@ public class RetrieveExpenseListByEmailTest {
             .when()
                 .post(url + "expenselists/expenseitems")
             .then()
-                .statusCode(200);
+                .statusCode(204);
 
 
         ExpenseItemList[] expenseItemLists =
